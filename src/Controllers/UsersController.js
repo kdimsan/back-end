@@ -31,7 +31,7 @@ class UsersController {
     }
 
     async update(request, response) {
-        const { name, email, password, old_password } = request.body;
+        const { name, email, password, old_password, isAdmin } = request.body;
         const { id } = request.params;
 
         const [user] = await knex("users").where({ id });
@@ -62,17 +62,20 @@ class UsersController {
             if(!checkPassword) {
                 throw new AppError("Senha antiga não confere.")
             }
+            user.password = await hash(password, 6);
+        }
+
+        if(isAdmin) {
+            user.isAdmin = true;
         }
         
-        user.password = await hash(password, 6);
-
         await knex("users").where({ id: user.id }).update({
             name: user.name, 
             email: user.email, 
             password: user.password, 
+            isAdmin: user.isAdmin,
             updated_at: knex.fn.now()
         });
-
         return response.json(user);
     }
 }
