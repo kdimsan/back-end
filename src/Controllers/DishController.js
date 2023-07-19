@@ -98,6 +98,36 @@ class DishController{
         response.json("Deletado com sucesso!");
     }
 
+    async index(request, response) {
+        const { id, name, ingredients } = request.query;
+
+        let dish;
+
+        if(ingredients) {
+            const filterIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
+           
+            dish = await knex("ingredients")
+            .select([
+                "dish.id",
+                "dish.name",
+                "dish.price",
+                "dish.description",
+            ])
+            .whereLike("dish.name", `%${name}%`)
+            .whereIn("title", filterIngredients)
+            .innerJoin("dish", "dish.id", "ingredients.dish_id")
+                    
+        } else {  
+            dish  = await knex("dish")
+        .whereLike("name", `%${name}%`);
+
+        if(!dish) {
+            throw new AppError("Prato inexistente.");
+            }
+        }
+        return response.json(dish);
+    }
+
 }
 
 module.exports = DishController;
