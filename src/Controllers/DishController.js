@@ -99,7 +99,7 @@ class DishController{
     }
 
     async index(request, response) {
-        const { id, name, ingredients } = request.query;
+        const { name, ingredients } = request.query;
 
         let dish;
 
