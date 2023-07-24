@@ -3,6 +3,7 @@ const express = require("express");
 
 const sqliteConnection = require("./database/sqlite");
 const AppError = require("./utils/AppError");
+const uploadConfig = require("./configs/uploads");
 
 const routes = require("./routes");
 
@@ -10,6 +11,8 @@ sqliteConnection();
 
 const app = express();
 app.use(express.json());
+
+app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 
 app.use(routes);
 
