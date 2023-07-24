@@ -1,10 +1,10 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
 
-class DishController{
+class PlatesController{
     async create(request, response) {
         const { name, price, description, ingredients } = request.body;
-        const { user_id } = request.query;
+        const  user_id  = request.user.id;
         
         const [user] = await knex("users").where({id: user_id});
 
@@ -39,7 +39,8 @@ class DishController{
     async update(request, response) {
         const { name, price, description, ingredients } = request.body;
         
-        const { user_id, id } = request.query;
+        const { id } = request.query;
+        const user_id = request.user.id;
         
         const [user] = await knex("users").where({id: user_id});
 
@@ -82,7 +83,8 @@ class DishController{
     }
 
     async delete(request, response) {
-        const { id, user_id } = request.query;
+        const { id } = request.query;
+        const user_id = request.user.id;
 
         const [user] = await knex("users").where({id: user_id});
         
@@ -100,6 +102,13 @@ class DishController{
 
     async index(request, response) {
         const { name, ingredients } = request.query;
+        const user_id = request.user.id;
+
+        const user = await knex("users").where({id: user_id});
+
+        if(!user) {
+            throw new AppError("Usuário não encontrado, favor efetuar o login.")
+        }
 
         let dish;
 
@@ -130,4 +139,4 @@ class DishController{
 
 }
 
-module.exports = DishController;
+module.exports = PlatesController;
