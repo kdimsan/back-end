@@ -10,7 +10,7 @@ class UsersController {
             throw new AppError("Nome é obrigatório.");
         }
         
-        const [existingUser] = await knex("users").where({email}).limit(1);
+        const [existingUser] = await knex("users").where({ email }).limit(1);
 
         if(existingUser){
             throw new AppError("Este email já está em uso.");
