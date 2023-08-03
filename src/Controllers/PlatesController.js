@@ -3,7 +3,7 @@ const AppError = require("../utils/AppError");
 
 class PlatesController{
     async create(request, response) {
-        const { name, price, description, ingredients } = request.body;
+        const { name, price, description, category, ingredients } = request.body;
         const  user_id  = request.user.id;
         
         const [user] = await knex("users").where({id: user_id});
@@ -12,7 +12,7 @@ class PlatesController{
             throw new AppError("Usuário inexistente.");
         }
 
-        if(user.isAdmin !== 1 ){
+        if(user.admin !== 1 ){
             throw new AppError("Usuário não é administrador e não pode editar pratos.");
         }
 
@@ -20,6 +20,7 @@ class PlatesController{
             name,
             price,
             description,
+            category,
             user_id
         });
 
@@ -31,7 +32,7 @@ class PlatesController{
            }
         });
 
-        await knex("ingredients").insert(ingredientsInsert);
+        await knex("tags").insert(ingredientsInsert);
         response.json("Criado com sucesso.");
         
     }
@@ -115,7 +116,7 @@ class PlatesController{
         if(ingredients) {
             const filterIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
            
-            dish = await knex("ingredients")
+            dish = await knex("tags")
             .select([
                 "dish.id",
                 "dish.name",
@@ -124,7 +125,8 @@ class PlatesController{
             ])
             .whereLike("dish.name", `%${name}%`)
             .whereIn("title", filterIngredients)
-            .innerJoin("dish", "dish.id", "ingredients.dish_id")
+            .innerJoin("dish", "dish.id", "tags.dish_id")
+            console.log(dish);
                     
         } else {  
             dish  = await knex("dish")

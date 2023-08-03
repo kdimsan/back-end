@@ -6,8 +6,8 @@ exports.up = knex => knex.schema.createTable("dish", table =>{
   
     table.decimal("price");
     table.text("description");
-
-    table.integer("category_id").references("id").inTable("category");
+    table.string("category");
+    
     table.integer("user_id").references("id").inTable("users");
 
     table.timestamp("created_at").default(knex.fn.now());
