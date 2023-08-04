@@ -138,7 +138,6 @@ class PlatesController{
         }
         return response.json(dish);
     }
-
 }
 
 module.exports = PlatesController;
