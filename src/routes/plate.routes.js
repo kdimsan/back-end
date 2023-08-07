@@ -17,6 +17,7 @@ plateRoutes.use(ensureAuthenticated);
 
 plateRoutes.post("/", platesController.create);
 plateRoutes.get("/", platesController.index);
+plateRoutes.get("/:id", platesController.show);
 plateRoutes.put("/", platesController.update);
 plateRoutes.delete("/", platesController.delete);
 plateRoutes.patch("/image", upload.single("image"), platesImageController.update);

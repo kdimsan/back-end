@@ -126,7 +126,6 @@ class PlatesController{
             .whereLike("dish.name", `%${name}%`)
             .whereIn("title", filterIngredients)
             .innerJoin("dish", "dish.id", "tags.dish_id")
-            console.log(dish);
                     
         } else {  
             dish  = await knex("dish")
@@ -137,6 +136,15 @@ class PlatesController{
             }
         }
         return response.json(dish);
+    }
+
+    async show(request, response) {
+        const {id} = request.params;
+    
+        const [dish] = await knex("dish").where({ id });
+        const tags = await knex("tags").where({dish_id: id});
+
+        return response.json({dish, tags})        
     }
 }
 
