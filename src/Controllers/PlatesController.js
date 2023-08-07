@@ -38,9 +38,9 @@ class PlatesController{
     }
 
     async update(request, response) {
-        const { name, price, description, ingredients } = request.body;
+        const { name, price, description, tags } = request.body;
         
-        const { id } = request.query;
+        const { id } = request.params;
         const user_id = request.user.id;
         
         const [user] = await knex("users").where({id: user_id});
@@ -49,7 +49,7 @@ class PlatesController{
             throw new AppError("Usuário inexistente.");
         }
 
-        if(user.isAdmin !== 1 ){
+        if(user.admin !== 1 ){
             throw new AppError("Usuário não é administrador e não pode editar pratos.");
         }
 
@@ -66,21 +66,21 @@ class PlatesController{
             updated_at: knex.fn.now()
         });
         
-        if(!ingredients){
+        if(!tags){
             return
         } 
 
-        await knex("ingredients").where({ dish_id: dish.id }).delete();
+        await knex("tags").where({ dish_id: dish.id }).delete();
 
-        const ingredientsInsert = ingredients.map(ingredient => {
+        const tagsInsert = tags.map(tag => {
             return {
-             title: ingredient,
+             title: tag,
              dish_id: id,
              user_id
             }
          });
-         await knex("ingredients").insert(ingredientsInsert);
-         response.json({dish, ingredientsInsert})
+         await knex("tags").insert(tagsInsert);
+         response.json({dish, tagsInsert})
     }
 
     async delete(request, response) {
