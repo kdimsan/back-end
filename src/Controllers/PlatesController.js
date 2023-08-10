@@ -102,7 +102,7 @@ class PlatesController{
     }
 
     async index(request, response) {
-        const { name, ingredients } = request.query;
+        const { search } = request.query;
         const user_id = request.user.id;
 
         const user = await knex("users").where({id: user_id});
@@ -113,28 +113,32 @@ class PlatesController{
 
         let dish;
 
-        if(ingredients) {
-            const filterIngredients = ingredients.split(',').map(ingredient => ingredient.trim());
-           
-            dish = await knex("tags")
+        if(search) {
+            const filterIngredients = search.split(' ').map(ingredient => ingredient.trim());
+
+            dish = await knex("dish")
             .select([
                 "dish.id",
                 "dish.name",
                 "dish.price",
                 "dish.description",
             ])
-            .whereLike("dish.name", `%${name}%`)
-            .whereIn("title", filterIngredients)
-            .innerJoin("dish", "dish.id", "tags.dish_id")
-                    
+            .whereIn("dish.id", function() {
+                this.select('tags.dish_id')
+                    .from('tags')
+                    .whereIn(knex.raw("LOWER(title)"), filterIngredients.map(ingredient => ingredient.toLowerCase()));
+            })
+            .orWhereLike("dish.name", `%${search}%`);
+
         } else {  
             dish  = await knex("dish")
-        .whereLike("name", `%${name}%`);
+        .whereLike("name", `%${search}%`);
 
         if(!dish) {
             throw new AppError("Prato inexistente.");
             }
         }
+        
         return response.json(dish);
     }
 
