@@ -1,11 +1,12 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
+const DiskStorage = require("../providers/DiskStorage");
 
 class PlatesController{
     async create(request, response) {
         const { name, price, description, category, ingredients } = request.body;
         const  user_id  = request.user.id;
-        
+
         const [user] = await knex("users").where({id: user_id});
 
         if(!user) {
@@ -13,7 +14,7 @@ class PlatesController{
         }
 
         if(user.admin !== 1 ){
-            throw new AppError("Usuário não é administrador e não pode editar pratos.");
+            throw new AppError("Usuário não é administrador e não pode criar pratos.");
         }
 
         const [dishId] = await knex("dish").insert({
@@ -33,8 +34,7 @@ class PlatesController{
         });
 
         await knex("tags").insert(ingredientsInsert);
-        response.json("Criado com sucesso.");
-        
+        response.json(dishId);
     }
 
     async update(request, response) {
@@ -84,20 +84,20 @@ class PlatesController{
     }
 
     async delete(request, response) {
-        const { id } = request.query;
+        const { id } = request.params;
         const user_id = request.user.id;
 
-        const [user] = await knex("users").where({id: user_id});
+        const [user] = await knex("users").where({ id: user_id });
         
         if(!user) {
             throw new AppError("Usuário não encontrado.");
         }
 
-        if(!user.isAdmin) {
+        if(!user.admin) {
             throw new AppError("Usuário não tem poderes de admin.");
         }
 
-        await knex("dish").where({id}).delete();
+        await knex("dish").where({ id }).delete();
         response.json("Deletado com sucesso!");
     }
 

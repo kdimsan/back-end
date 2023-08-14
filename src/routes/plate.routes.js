@@ -1,9 +1,10 @@
 const { Router } = require("express");
+
 const PlatesController = require("../Controllers/PlatesController");
 const PlatesImageController = require("../Controllers/PlatesImageController");
+
 const multer = require("multer");
 const uploadConfig = require("../configs/uploads");
-
 
 const plateRoutes = Router();
 const upload = multer(uploadConfig.MULTER);
@@ -15,11 +16,11 @@ const ensureAuthenticated = require("../middlewares/ensureAuthenticated");
 
 plateRoutes.use(ensureAuthenticated);
 
-plateRoutes.post("/", platesController.create);
+plateRoutes.post("/", upload.single("image"), platesController.create);
 plateRoutes.get("/", platesController.index);
 plateRoutes.get("/:id", platesController.show);
 plateRoutes.put("/:id", platesController.update);
-plateRoutes.delete("/", platesController.delete);
+plateRoutes.delete("/:id", platesController.delete);
 plateRoutes.patch("/image", upload.single("image"), platesImageController.update);
 
 

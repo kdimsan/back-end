@@ -1,6 +1,6 @@
 const knex = require("../database/knex");
 const AppError = require("../utils/AppError");
-const DiskStorage = require("../providers/DiskStorage")
+const DiskStorage = require("../providers/DiskStorage");
 
 class PlatesImageController {
     async update(request, response) {
@@ -22,6 +22,7 @@ class PlatesImageController {
         if(dish.image) {
             await diskStorage.deleteFile(dish.image);
         }
+        
         const filename = await diskStorage.saveFile(dish_filename);
         dish.image = filename;
 
