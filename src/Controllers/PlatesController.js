@@ -38,7 +38,7 @@ class PlatesController{
     }
 
     async update(request, response) {
-        const { name, price, description, tags } = request.body;
+        const { name, price, description, tags, category } = request.body;
         
         const { id } = request.params;
         const user_id = request.user.id;
@@ -58,11 +58,13 @@ class PlatesController{
         dish.name = name ??dish.name;
         dish.price = price ?? dish.price;
         dish.description = description ?? dish.description;
+        dish.category = category ?? dish.category;
 
         await knex("dish").where({id}).update({
             name: dish.name,
             price: dish.price,
             description: dish.description,
+            category: dish.category,
             updated_at: knex.fn.now()
         });
         
