@@ -121,8 +121,10 @@ class PlatesController{
             dish = await knex("dish")
             .select([
                 "dish.id",
+                "dish.image",
                 "dish.name",
                 "dish.price",
+                "dish.category",
                 "dish.description",
             ])
             .whereIn("dish.id", function() {
