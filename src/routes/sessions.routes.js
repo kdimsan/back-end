@@ -1,6 +1,6 @@
 const { Router } = require("express");
 const SessionsCotroller = require("../Controllers/SessionsController");
-const sessionsController = new SessionsCotroller;
+const sessionsController = new SessionsCotroller();
 
 const sessionsRoutes = Router();
 
